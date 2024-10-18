@@ -1,62 +1,31 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Получаем контейнер для виджета
-  const container = document.getElementById('app');
+  const fileList = document.getElementById('file-list');
+  const previewWindow = document.getElementById('preview-window');
+  const previewIframe = document.getElementById('preview-iframe');
 
-  // Запрашиваем данные о текущей сделке
-  AMOCRM.widgets.load({
-    domain: 'yourdomain.amocrm.ru', // замените на ваш домен Kommo CRM
-    path: '/leads/detail/your_lead_id', // замените на ID вашей сделки
-  }).then(response => {
-    const lead = response.response.leads[0];
-    const files = lead.files || [];
+  // Пример списка файлов (замени это реальными данными из API Kommo CRM)
+  const files = [
+    { name: 'Document 1', url: 'https://example.com/doc1.pdf' },
+    { name: 'Document 2', url: 'https://example.com/doc2.pdf' }
+  ];
 
-    if (files.length === 0) {
-      container.innerHTML = '<p>No files attached to this deal.</p>';
-      return;
-    }
+  files.forEach(file => {
+    const fileItem = document.createElement('div');
+    fileItem.className = 'file-item';
 
-    const iframe = document.createElement('iframe');
-    iframe.className = 'preview-container';
+    const fileName = document.createElement('span');
+    fileName.textContent = file.name;
 
-    files.forEach(file => {
-      if (file.url) {
-        iframe.src = `https://docs.google.com/viewer?url=${file.url}&embedded=true`;
-        container.appendChild(iframe);
-      }
+    const previewButton = document.createElement('button');
+    previewButton.className = 'preview-button';
+    previewButton.textContent = 'Предпросмотр';
+    previewButton.addEventListener('click', function() {
+      previewIframe.src = `https://docs.google.com/viewer?url=${file.url}&embedded=true`;
+      previewWindow.style.display = 'block';
     });
-  }).catch(error => {
-    console.error('Error loading lead data:', error);
-    container.innerHTML = '<p>Error loading lead data.</p>';
-  });
-});
-document.addEventListener('DOMContentLoaded', function() {
-  // Получаем контейнер для виджета
-  const container = document.getElementById('app');
 
-  // Запрашиваем данные о текущей сделке
-  AMOCRM.widgets.load({
-    domain: 'yourdomain.amocrm.ru', // замените на ваш домен Kommo CRM
-    path: '/leads/detail/your_lead_id', // замените на ID вашей сделки
-  }).then(response => {
-    const lead = response.response.leads[0];
-    const files = lead.files || [];
-
-    if (files.length === 0) {
-      container.innerHTML = '<p>No files attached to this deal.</p>';
-      return;
-    }
-
-    const iframe = document.createElement('iframe');
-    iframe.className = 'preview-container';
-
-    files.forEach(file => {
-      if (file.url) {
-        iframe.src = `https://docs.google.com/viewer?url=${file.url}&embedded=true`;
-        container.appendChild(iframe);
-      }
-    });
-  }).catch(error => {
-    console.error('Error loading lead data:', error);
-    container.innerHTML = '<p>Error loading lead data.</p>';
+    fileItem.appendChild(fileName);
+    fileItem.appendChild(previewButton);
+    fileList.appendChild(fileItem);
   });
 });
